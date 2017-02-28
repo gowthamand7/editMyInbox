@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="container" style="width:100%">
+<link rel='stylesheet prefetch' href='http://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css'>
+ <div class="mail-box">
+                  <aside class="sm-side">
+                      <div class="user-head">
+                          <a class="inbox-avatar" href="javascript:;">
+                              <img  width="64" hieght="60" src="{{ user_info.picture }}">
+                          </a>
+                          <div class="user-name">
+                              <h5><a href="#">{{ user_info.name }}</a></h5>
+                              <span><a href="#">{{ user_info.email }}</a></span>
+                          </div>
+                          <a class="mail-dropdown pull-right" href="javascript:;">
+                              <i class="fa fa-chevron-down"></i>
+                          </a>
+                      </div>
+                      <ul class="nav nav-pills nav-stacked labels-info inbox-divider">
+                          <li> <h4>Labels</h4> </li>
+                          {% for label in labels %}
+                          <li> <a href="#"> <i class=" fa fa-sign-blank text-danger"></i> {{ label.name }} </a> </li>
+                          {% endfor %}
+                      </ul>
+                  </aside>
+                  <aside class="lg-side">
+                      <div class="inbox-head">
+                          <form action="#" class="pull-right position">
+                              <div class="input-append">
+                                  <input type="text" class="sr-input" placeholder="Search Mail">
+                                  <button class="btn sr-btn" type="button"><i class="fa fa-search"></i></button>
+                              </div>
+                          </form>
+                      </div>
+                      <div class="inbox-body">
+                         <div class="mail-option">
+                             <ul class="unstyled inbox-pagination">
+                                 <li>
+                                     <a class="np-btn" href="/home/{{ nextPageToken }}"><i class="fa fa-angle-right pagination-right"></i></a>
+                                 </li>
+                             </ul>
+                         </div>
+                          <table class="table table-inbox table-hover">
+                            <tbody>
+                            {% for message in messages %}
+                                <tr>
+                                  <td class="inbox-small-cells"><i class="fa fa-star"></i></td>
+                                  <td class="view-message  dont-show">{{ message['from_email'] }}</td>
+                                  <td class="view-message ">{{ message['subject'] }}</td>
+                                  <td class="view-message  text-right">{{ message['date'] }}</td>
+                              </tr>
+                            {% endfor %}
+
+                          </tbody>
+                          </table>
+                      </div>
+                  </aside>
+              </div>
+</div>
+
+{% endblock %}
