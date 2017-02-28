@@ -36,7 +36,61 @@ def home(next_page_token= None):
         messages, next_page_token = google.get_messages()
     else:
         messages, next_page_token = google.get_messages(page_token=next_page_token)
-    return render_template('inbox.html', labels=labels, user_info=user_info, messages=messages, nextPageToken=next_page_token)
+
+    if next_page_token is not None:
+        next_url = '/home/{}'.format(next_page_token)
+    else:
+        next_url = None
+
+    return render_template('inbox.html', labels=labels, user_info=user_info, messages=messages, next_url=next_url)
+
+
+@app.route('/label/<string:label_id>')
+@app.route('/label/<string:label_id>/<string:next_page_token>')
+def label(label_id, next_page_token= None):
+    google = Google(flask.session['credentials'])
+    user_info = google.get_user_info()
+    labels = google.get_labels()
+    if next_page_token is None:
+        messages, next_page_token = google.get_messages_by_labels(label_id)
+    else:
+        messages, next_page_token = google.get_messages_by_labels(label_id, page_token=next_page_token)
+
+    if next_page_token is not None:
+        next_url = '/label/{}/{}'.format(label_id, next_page_token)
+    else:
+        next_url = None
+
+    return render_template('inbox.html', labels=labels, user_info=user_info, messages=messages, next_url=next_url)
+
+
+@app.route('/search')
+@app.route('/search/<string:next_page_token>')
+def search(next_page_token= None):
+    search_query = request.args.get('q')
+    google = Google(flask.session['credentials'])
+    user_info = google.get_user_info()
+    labels = google.get_labels()
+    if next_page_token is None:
+        messages, next_page_token = google.get_messages_by_subject(search_query=search_query)
+    else:
+        messages, next_page_token = google.get_messages_by_subject(search_query=search_query, page_token=next_page_token)
+
+    if next_page_token is not None:
+        next_url = '/search/{}?q={}'.format(next_page_token,search_query)
+    else:
+        next_url = None
+
+    return render_template('inbox.html', labels=labels, user_info=user_info, messages=messages, next_url=next_url)
+
+
+@app.route('/message/<string:message_id>')
+def get_message(message_id):
+    google = Google(flask.session['credentials'])
+    body = google.get_message(message_id)
+
+    return render_template('edit_message.html',body=body)
+
 
 if __name__ == '__main__':
     app.secret_key = str(uuid.uuid4())

@@ -21,16 +21,18 @@
                       <ul class="nav nav-pills nav-stacked labels-info inbox-divider">
                           <li> <h4>Labels</h4> </li>
                           {% for label in labels %}
-                          <li> <a href="#"> <i class=" fa fa-sign-blank text-danger"></i> {{ label.name }} </a> </li>
+                          <li> <a href="/label/{{ label.id }}"> <i class=" fa fa-sign-blank text-danger"></i> {{ label.name }} </a> </li>
                           {% endfor %}
                       </ul>
                   </aside>
                   <aside class="lg-side">
                       <div class="inbox-head">
-                          <form action="#" class="pull-right position">
+                          <form action="/search" method="get" class="pull-right position">
                               <div class="input-append">
-                                  <input type="text" class="sr-input" placeholder="Search Mail">
-                                  <button class="btn sr-btn" type="button"><i class="fa fa-search"></i></button>
+                                  <input type="text" class="sr-input" name="q" placeholder="Search Mail by subject">
+                                  <button class="btn sr-btn" type="submit">
+                                      <i class="fa fa-s earch"></i>
+                                  </button>
                               </div>
                           </form>
                       </div>
@@ -38,7 +40,9 @@
                          <div class="mail-option">
                              <ul class="unstyled inbox-pagination">
                                  <li>
-                                     <a class="np-btn" href="/home/{{ nextPageToken }}"><i class="fa fa-angle-right pagination-right"></i></a>
+                                     {% if next_url is not none %}
+                                     <a class="np-btn" href="{{ next_url }}"><i class="fa fa-angle-right pagination-right"></i></a>
+                                     {%endif %}
                                  </li>
                              </ul>
                          </div>
@@ -46,13 +50,20 @@
                             <tbody>
                             {% for message in messages %}
                                 <tr>
-                                  <td class="inbox-small-cells"><i class="fa fa-star"></i></td>
                                   <td class="view-message  dont-show">{{ message['from_email'] }}</td>
-                                  <td class="view-message ">{{ message['subject'] }}</td>
+                                  <td class="view-message ">
+                                    <a href="/message/{{ message['id'] }}">
+                                        {{ message['subject'] }}
+                                    </a>
+                                  </td>
                                   <td class="view-message  text-right">{{ message['date'] }}</td>
                               </tr>
                             {% endfor %}
-
+                            {% if messages|length == 0 %}
+                                <tr>
+                                    <td>There aren't any message yet! </td>
+                                </tr>
+                            {% endif %}
                           </tbody>
                           </table>
                       </div>
